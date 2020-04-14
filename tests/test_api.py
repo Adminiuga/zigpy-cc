@@ -226,3 +226,13 @@ async def test_node_desc(api: zigpy_cc.api.API):
 #
 # def test_handle_version(api):
 #     api._handle_version([mock.sentinel.version])
+
+
+@pytest.mark.asyncio
+@mock.patch.object(zigpy_cc.api.API, "connect")
+async def test_api_new(conn_mck):
+    """Test new class method."""
+    api = await zigpy_cc.api.API.new(mock.sentinel.application, DEVICE_CONFIG)
+    assert isinstance(api, zigpy_cc.api.API)
+    assert conn_mck.call_count == 1
+    assert conn_mck.await_count == 1
