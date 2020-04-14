@@ -1,5 +1,5 @@
 import asyncio
-from unittest import mock
+from asynctest import mock
 
 import pytest
 
@@ -9,6 +9,7 @@ import zigpy_cc.config
 from zigpy_cc.definition import Definition
 import zigpy_cc.exception
 from zigpy_cc.uart import UnpiFrame
+import zigpy_cc.uart
 from zigpy_cc.zpi_object import ZpiObject
 
 DEVICE_CONFIG = zigpy_cc.config.SCHEMA_DEVICE(
@@ -229,7 +230,7 @@ async def test_node_desc(api: zigpy_cc.api.API):
 
 
 @pytest.mark.asyncio
-@mock.patch.object(zigpy_cc.api.API, "connect")
+@mock.patch.object(zigpy_cc.uart, "connect")
 async def test_api_new(conn_mck):
     """Test new class method."""
     api = await zigpy_cc.api.API.new(mock.sentinel.application, DEVICE_CONFIG)
