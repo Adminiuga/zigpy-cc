@@ -15,5 +15,5 @@ setup(
     license="GPL-3.0",
     packages=find_packages(exclude=["*.tests"]),
     install_requires=["pyserial-asyncio", "zigpy>=0.20.a1"],
-    tests_require=["pytest", "pytest-asyncio"],
+    tests_require=["asynctest", "pytest", "pytest-asyncio"],
 )
