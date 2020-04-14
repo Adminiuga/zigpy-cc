@@ -3,17 +3,22 @@ from unittest import mock
 
 import pytest
 
-import zigpy_cc.api
-import zigpy_cc.exception
 from zigpy_cc import types as t, uart
+import zigpy_cc.api
+import zigpy_cc.config
 from zigpy_cc.definition import Definition
+import zigpy_cc.exception
 from zigpy_cc.uart import UnpiFrame
 from zigpy_cc.zpi_object import ZpiObject
+
+DEVICE_CONFIG = zigpy_cc.config.SCHEMA_DEVICE(
+    {zigpy_cc.config.CONF_DEVICE_PATH: "/dev/null"}
+)
 
 
 @pytest.fixture
 def api():
-    api = zigpy_cc.api.API()
+    api = zigpy_cc.api.API(DEVICE_CONFIG)
     api._uart = mock.MagicMock()
     return api
 
@@ -25,18 +30,18 @@ def test_set_application(api):
 
 @pytest.mark.asyncio
 async def test_connect(monkeypatch):
-    api = zigpy_cc.api.API()
-    dev = mock.MagicMock()
+    api = zigpy_cc.api.API(DEVICE_CONFIG)
     monkeypatch.setattr(
         uart, "connect", mock.MagicMock(side_effect=asyncio.coroutine(mock.MagicMock()))
     )
-    await api.connect(dev, 115200)
+    await api.connect()
 
 
 def test_close(api):
     api._uart.close = mock.MagicMock()
+    uart = api._uart
     api.close()
-    assert api._uart.close.call_count == 1
+    assert uart.close.call_count == 1
 
 
 @pytest.mark.skip("TODO")
