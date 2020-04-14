@@ -6,7 +6,7 @@ import serial
 import serial.tools.list_ports
 import serial_asyncio
 
-from zigpy_cc.config import CONF_DEVICE_BAUDRATE, CONF_DEVICE_PATH
+from zigpy_cc.config import CONF_DEVICE_BAUDRATE, CONF_DEVICE_PATH, CONF_FLOW_CONTROL
 import zigpy_cc.types as t
 
 LOGGER = logging.getLogger(__name__)
@@ -169,6 +169,12 @@ async def connect(config: Dict[str, Any], api, loop=None) -> Gateway:
             LOGGER.error("Unable to find TI CC device using auto mode")
             raise serial.SerialException("Unable to find TI CC device using auto mode")
 
+    xonxoff, rtscts = False, False
+    if config[CONF_FLOW_CONTROL] == "hardware":
+        xonxoff, rtscts = False, True
+    elif config[CONF_FLOW_CONTROL] == "software":
+        xonxoff, rtscts = True, False
+
     _, protocol = await serial_asyncio.create_serial_connection(
         loop,
         lambda: protocol,
@@ -176,8 +182,8 @@ async def connect(config: Dict[str, Any], api, loop=None) -> Gateway:
         baudrate=baudrate,
         parity=serial.PARITY_NONE,
         stopbits=serial.STOPBITS_ONE,
-        xonxoff=False,
-        rtscts=False,
+        xonxoff=xonxoff,
+        rtscts=rtscts,
     )
 
     await connected_future
