@@ -3,14 +3,16 @@ import logging
 
 import zigpy.application
 import zigpy.device
+from zigpy.profiles import zha
 import zigpy.types
 import zigpy.util
-from zigpy.profiles import zha
 from zigpy.zdo.types import ZDOCmd
-from zigpy_cc import types as t, __version__
+
+from zigpy_cc import __version__, types as t
 from zigpy_cc.api import API
-from zigpy_cc.exception import CommandError, TODO
-from zigpy_cc.types import Subsystem, NetworkOptions, ZnpVersion
+from zigpy_cc.config import CONFIG_SCHEMA
+from zigpy_cc.exception import TODO, CommandError
+from zigpy_cc.types import NetworkOptions, Subsystem, ZnpVersion
 from zigpy_cc.zigbee.start_znp import start_znp
 from zigpy_cc.zpi_object import ZpiObject
 
@@ -46,6 +48,7 @@ IGNORED = (
 
 class ControllerApplication(zigpy.application.ControllerApplication):
     _api: API
+    SCHEMA = CONFIG_SCHEMA
 
     def __init__(self, api: API, database_file=None):
         super().__init__(database_file=database_file)
